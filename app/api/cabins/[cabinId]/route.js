@@ -13,6 +13,4 @@ export async function GET(request, { params }) {
   } catch (error) {
     return Response.json({ message: "Cabin not found" });
   }
-
-  return Response.json({ test: "test" });
 }
