@@ -63,11 +63,6 @@
 
 /* Custom styles for React Day Picker v9 */
 .rdp-root {
-  /* --rdp-day-height: 20px !important;
-  --rdp-day-width: 20px !important;
-  --rdp-day_button-height: 24px !important;
-  --rdp-day_button-widht: 24px !important;
-  --rdp-months-gap: 1rem !important; */
   --rdp-weekday-padding: 0.2rem !important ;
   --rdp-accent-color: var(--color-accent-500) !important;
   --rdp-accent-background-color: var(--color-accent-600) !important;
@@ -80,10 +75,3 @@
     color: var(--color-slate-300) !important;
   }
 }
-
-/* For data picker .rdp {
-  --rdp-cell-size: 32px !important;
-  --rdp-accent-color: theme("colors.accent.500") !important;
-  --rdp-background-color: theme("colors.accent.600") !important;
-  margin: 0 !important;
-} */

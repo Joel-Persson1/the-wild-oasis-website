@@ -5,11 +5,12 @@ import { differenceInDays, isSameDay, isWithinInterval } from "date-fns";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { useReservation } from "../context/ReservationContext";
+import { useEffect, useState } from "react";
 
 function isAlreadyBooked(range, datesArr) {
   return (
-    range.from &&
-    range.to &&
+    range?.from &&
+    range?.to &&
     datesArr.some((date) =>
       isWithinInterval(date, { start: range.from, end: range.to })
     )
@@ -19,7 +20,9 @@ function isAlreadyBooked(range, datesArr) {
 function DateSelector({ settings, cabin, bookedDates }) {
   const { range, setRange, resetRange } = useReservation();
 
-  const displayRange = isAlreadyBooked(range, bookedDates) ? {} : range;
+  const displayRange = isAlreadyBooked(range, bookedDates)
+    ? resetRange()
+    : range;
 
   const { regularPrice, discount } = cabin;
   const numNights = differenceInDays(displayRange?.to, range?.from);
@@ -28,17 +31,32 @@ function DateSelector({ settings, cabin, bookedDates }) {
   // SETTINGS
   const { minBookingLength, maxBookingLength } = settings;
 
-  console.log(bookedDates);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    handleResize(); // Set initial value
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <div className="flex flex-col justify-between">
+    <div className="flex flex-col justify-between gap-10 md:gap-0">
       <DayPicker
-        className="pt-12 self-center"
-        styles={{
-          months: { width: "30rem" },
-          day: { width: "32px", height: "32px" },
-          day_button: { width: "30px", height: "30px" },
-        }}
+        className="pt-12 place-self-center"
+        styles={
+          !isMobile
+            ? {
+                months: { width: "30rem" },
+                day: { width: "32px", height: "32px" },
+                day_button: { width: "30px", height: "30px" },
+              }
+            : ""
+        }
         mode="range"
         onSelect={setRange}
         selected={displayRange}
@@ -49,15 +67,12 @@ function DateSelector({ settings, cabin, bookedDates }) {
         endMonth={new Date(new Date().getFullYear(), 5 * 12)}
         captionLayout="dropdown"
         hideNavigation
-        numberOfMonths={2}
+        numberOfMonths={isMobile ? 1 : 2}
         disabled={[{ before: new Date() }, ...bookedDates]}
-        // disabled={(curDate) =>
-        //   bookedDates.some((date) => isSameDay(date, curDate))
-        // }
       />
 
-      <div className="flex items-center justify-between px-8 bg-accent-500 text-primary-800 h-[72px]">
-        <div className="flex items-baseline gap-6">
+      <div className="flex flex-wrap justify-center items-center gap-2 md:gap-0 md:justify-between p-2 md:px-8 bg-accent-500 text-primary-800">
+        <div className="flex items-baseline gap-2 md:gap-6">
           <p className="flex gap-2 items-baseline">
             {discount > 0 ? (
               <>
@@ -67,18 +82,22 @@ function DateSelector({ settings, cabin, bookedDates }) {
                 </span>
               </>
             ) : (
-              <span className="text-2xl">${regularPrice}</span>
+              <span className="text-lg  md:text-2xl">${regularPrice}</span>
             )}
-            <span className="">/night</span>
+            <span>/night</span>
           </p>
           {numNights ? (
             <>
-              <p className="bg-accent-600 px-3 py-2 text-2xl">
+              <p className="bg-accent-600 px-3 py-2 text-base md:text-2xl">
                 <span>&times;</span> <span>{numNights}</span>
               </p>
               <p>
-                <span className="text-lg font-bold uppercase">Total</span>{" "}
-                <span className="text-2xl font-semibold">${cabinPrice}</span>
+                <span className="text-sm md:text-lg font-bold uppercase">
+                  Total
+                </span>{" "}
+                <span className="text-lg md:text-2xl font-semibold">
+                  ${cabinPrice}
+                </span>
               </p>
             </>
           ) : null}

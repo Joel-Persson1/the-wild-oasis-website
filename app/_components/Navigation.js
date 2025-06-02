@@ -1,24 +1,24 @@
+import Image from "next/image";
 import Link from "next/link";
-import { auth } from "../_lib/auth";
 
-export default async function Navigation() {
-  const session = await auth();
-
+export default function Navigation({ handleToggle, session }) {
   return (
     <nav className="z-10 text-xl">
-      <ul className="flex gap-16 items-center">
+      <ul className="flex flex-col md:flex-row gap-2 md:gap-16 items-center">
         <li>
           <Link
+            onClick={handleToggle}
             href="/cabins"
-            className="hover:text-accent-400 transition-colors"
+            className="hover:text-accent-400 transition-colors text-black md:text-primary-100"
           >
             Cabins
           </Link>
         </li>
         <li>
           <Link
+            onClick={handleToggle}
             href="/about"
-            className="hover:text-accent-400 transition-colors"
+            className="hover:text-accent-400 transition-colors text-black md:text-primary-100"
           >
             About
           </Link>
@@ -26,21 +26,26 @@ export default async function Navigation() {
         <li>
           {session?.user?.image ? (
             <Link
+              onClick={handleToggle}
               href="/account"
-              className="hover:text-accent-400 transition-colors flex items-center gap-4"
+              className="hover:text-accent-400 transition-colors text-black md:text-primary-100 flex items-center gap-4 md:flex-row flex-col-reverse"
             >
-              <img
-                className="h-8 rounded-full"
-                src={session.user.image}
-                alt={session.user.name}
-                referrerPolicy="no-referrer"
-              />
+              <div className="size-8 relative">
+                <Image
+                  fill
+                  className="rounded-full object-cover"
+                  src={session.user.image}
+                  alt={session.user.name}
+                  referrerPolicy="no-referrer"
+                />
+              </div>
               <span>Guest area</span>
             </Link>
           ) : (
             <Link
+              onClick={handleToggle}
               href="/account"
-              className="hover:text-accent-400 transition-colors"
+              className="hover:text-accent-400 transition-colors text-black md:text-primary-100"
             >
               Guest area
             </Link>
